@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مراجعة القرآن - Quran Flashcards</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>مراجعة القرآن الكريم</h1>
+        
+        <div class="controls">
+            <select id="surahSelect">
+                <option value="">اختر السورة</option>
+                <option value="1">1. الفاتحة</option>
+                <option value="2">2. البقرة</option>
+                <option value="3">3. آل عمران</option>
+                <option value="4">4. النساء</option>
+                <option value="5">5. المائدة</option>
+                <option value="6">6. الأنعام</option>
+                <option value="7">7. الأعراف</option>
+                <option value="8">8. الأنفال</option>
+                <option value="9">9. التوبة</option>
+                <option value="10">10. يونس</option>
+                <!-- Add all 114 surahs if needed -->
+                <option value="18">18. الكهف</option>
+                <option value="19">19. مريم</option>
+                <option value="20">20. طه</option>
+                <option value="36">36. يس</option>
+                <option value="55">55. الرحمن</option>
+                <option value="56">56. الواقعة</option>
+                <option value="67">67. الملك</option>
+                <option value="78">78. النبأ</option>
+                <option value="112">112. الإخلاص</option>
+                <option value="113">113. الفلق</option>
+                <option value="114">114. الناس</option>
+            </select>
+            <button id="newCard">آية جديدة</button>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p>جاري التحميل...</p>
+        </div>
+
+        <div class="flashcard" onclick="flipCard()" id="flashcard">
+            <div class="flashcard-inner">
+                <div class="flashcard-front">
+                    <div class="surah-name" id="surahName"></div>
+                    <p id="question">اختر سورة للبدء</p>
+                </div>
+                <div class="flashcard-back">
+                    <p id="answer">الإجابة</p>
+                </div>
+            </div>
+        </div>
+        
+        <p class="hint">انقر على البطاقة لإظهار الآيات التالية</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
