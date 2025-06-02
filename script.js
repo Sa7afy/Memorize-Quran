@@ -79,12 +79,6 @@ async function generateNewCard() {
     // Reset flip
     flashcard.classList.remove('flipped');
     
-    // Check if surah has enough ayahs (at least 3)
-    if (currentSurah.ayahs.length < 3) {
-        alert('هذه السورة قصيرة جداً. الرجاء اختيار سورة أطول.');
-        return;
-    }
-    
     // Generate random ayah index (not the last two)
     const maxIndex = currentSurah.ayahs.length - 3;
     currentAyahIndex = Math.floor(Math.random() * (maxIndex + 1));
