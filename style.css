@@ -5,7 +5,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-family: 'Amiri', 'Scheherazade New', 'Traditional Arabic', serif;
     background: linear-gradient(135deg, #1e3c72, #2a5298);
     min-height: 100vh;
     display: flex;
@@ -17,7 +17,7 @@ body {
 .container {
     text-align: center;
     padding: 20px;
-    max-width: 700px;
+    max-width: 800px;
     width: 100%;
 }
 
@@ -26,23 +26,68 @@ h1 {
     margin-bottom: 30px;
     font-size: 2.5em;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-family: 'Amiri', serif;
 }
 
 .controls {
-    margin-bottom: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
     display: flex;
+    flex-direction: column;
     gap: 15px;
-    justify-content: center;
-    flex-wrap: wrap;
 }
 
-select, button {
-    padding: 12px 24px;
+.control-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.control-group label {
+    color: white;
     font-size: 1.1em;
+    font-weight: bold;
+}
+
+.range-controls {
+    transition: opacity 0.3s ease;
+}
+
+.range-controls.hidden {
+    display: none;
+}
+
+.range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.range-inputs input {
+    width: 80px;
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 1em;
+}
+
+.range-inputs span {
+    color: white;
+    font-weight: bold;
+}
+
+select, button, input {
+    padding: 10px 20px;
+    font-size: 1em;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-family: 'Amiri', serif;
 }
 
 select {
@@ -51,20 +96,61 @@ select {
     min-width: 200px;
 }
 
-select:disabled, button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+input[type="number"] {
+    background: white;
+    color: #333;
 }
 
 button {
     background: #4CAF50;
     color: white;
+    font-weight: bold;
+}
+
+.primary-btn {
+    background: #4CAF50;
+    padding: 12px 30px;
+    font-size: 1.2em;
+}
+
+.small-btn {
+    background: #2196F3;
+    padding: 8px 16px;
+    font-size: 0.9em;
 }
 
 button:hover:not(:disabled) {
-    background: #45a049;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.primary-btn:hover {
+    background: #45a049;
+}
+
+.small-btn:hover {
+    background: #1976D2;
+}
+
+select:disabled, button:disabled, input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Info Bar */
+.info-bar {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-around;
+    font-size: 1em;
+}
+
+.info-bar.hidden {
+    display: none;
 }
 
 /* Loading Spinner */
@@ -100,8 +186,8 @@ button:hover:not(:disabled) {
 /* Flashcard Styles */
 .flashcard {
     width: 100%;
-    max-width: 600px;
-    height: 350px;
+    max-width: 700px;
+    min-height: 400px;
     margin: 0 auto;
     perspective: 1000px;
     cursor: pointer;
@@ -115,6 +201,7 @@ button:hover:not(:disabled) {
     position: relative;
     width: 100%;
     height: 100%;
+    min-height: 400px;
     text-align: center;
     transition: transform 0.6s;
     transform-style: preserve-3d;
@@ -127,14 +214,14 @@ button:hover:not(:disabled) {
 .flashcard-front, .flashcard-back {
     position: absolute;
     width: 100%;
-    height: 100%;
+    min-height: 400px;
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 30px;
+    padding: 40px;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     overflow-y: auto;
@@ -163,9 +250,10 @@ button:hover:not(:disabled) {
 }
 
 .flashcard p {
-    font-size: 1.4em;
-    line-height: 2;
-    font-family: 'Traditional Arabic', 'Amiri', 'Arial', serif;
+    font-size: 1.8em;
+    line-height: 2.2;
+    font-family: 'Amiri', 'Scheherazade New', serif;
+    font-weight: 400;
 }
 
 .ayah-number {
@@ -175,7 +263,7 @@ button:hover:not(:disabled) {
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.7em;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-weight: bold;
 }
 
@@ -191,22 +279,37 @@ button:hover:not(:disabled) {
 }
 
 /* Responsive Design */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     h1 {
         font-size: 2em;
     }
     
+    .controls {
+        padding: 15px;
+    }
+    
+    .control-group {
+        width: 100%;
+    }
+    
+    .range-inputs {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
     .flashcard {
-        height: 300px;
+        min-height: 350px;
+    }
+    
+    .flashcard-inner,
+    .flashcard-front,
+    .flashcard-back {
+        min-height: 350px;
     }
     
     .flashcard p {
-        font-size: 1.2em;
-    }
-    
-    .controls {
-        flex-direction: column;
-        align-items: center;
+        font-size: 1.5em;
+        line-height: 2;
     }
     
     select {
