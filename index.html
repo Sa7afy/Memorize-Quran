@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مراجعة القرآن - Quran Flashcards</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,32 +14,40 @@
         <h1>مراجعة القرآن الكريم</h1>
         
         <div class="controls">
-            <select id="surahSelect">
-                <option value="">اختر السورة</option>
-                <option value="1">1. الفاتحة</option>
-                <option value="2">2. البقرة</option>
-                <option value="3">3. آل عمران</option>
-                <option value="4">4. النساء</option>
-                <option value="5">5. المائدة</option>
-                <option value="6">6. الأنعام</option>
-                <option value="7">7. الأعراف</option>
-                <option value="8">8. الأنفال</option>
-                <option value="9">9. التوبة</option>
-                <option value="10">10. يونس</option>
-                <!-- Add all 114 surahs if needed -->
-                <option value="18">18. الكهف</option>
-                <option value="19">19. مريم</option>
-                <option value="20">20. طه</option>
-                <option value="36">36. يس</option>
-                <option value="55">55. الرحمن</option>
-                <option value="56">56. الواقعة</option>
-                <option value="67">67. الملك</option>
-                <option value="78">78. النبأ</option>
-                <option value="112">112. الإخلاص</option>
-                <option value="113">113. الفلق</option>
-                <option value="114">114. الناس</option>
-            </select>
-            <button id="newCard">آية جديدة</button>
+            <div class="control-group">
+                <label for="surahSelect">السورة:</label>
+                <select id="surahSelect">
+                    <option value="">اختر السورة</option>
+                </select>
+            </div>
+
+            <div class="control-group range-controls" id="rangeControls">
+                <label>نطاق الآيات:</label>
+                <div class="range-inputs">
+                    <input type="number" id="startAyah" min="1" placeholder="من">
+                    <span>إلى</span>
+                    <input type="number" id="endAyah" min="1" placeholder="إلى">
+                </div>
+                <button id="useFullSurah" class="small-btn">كل السورة</button>
+            </div>
+
+            <div class="control-group">
+                <label for="answerCount">عدد الآيات في الإجابة:</label>
+                <select id="answerCount">
+                    <option value="1" selected>آية واحدة</option>
+                    <option value="2">آيتان</option>
+                    <option value="3">ثلاث آيات</option>
+                    <option value="4">أربع آيات</option>
+                    <option value="5">خمس آيات</option>
+                </select>
+            </div>
+
+            <button id="newCard" class="primary-btn">آية جديدة</button>
+        </div>
+
+        <div class="info-bar" id="infoBar">
+            <span id="rangeInfo"></span>
+            <span id="totalAyahs"></span>
         </div>
 
         <div class="loading-spinner" id="loadingSpinner">
@@ -56,7 +67,7 @@
             </div>
         </div>
         
-        <p class="hint">انقر على البطاقة لإظهار الآيات التالية</p>
+        <p class="hint">انقر على البطاقة لإظهار الإجابة | مسافة للقلب | Enter لآية جديدة</p>
     </div>
 
     <script src="script.js"></script>
