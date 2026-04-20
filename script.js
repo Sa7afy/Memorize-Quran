@@ -4,7 +4,12 @@
    CONSTANTS
    ===================================================================== */
 
-// SURAH_STARTS[S] + A = global ayah number for surah S, ayah A (1-indexed)
+// Total number of ayahs in the entire Quran
+const TOTAL_AYAHS = 6236;
+
+// SURAH_STARTS[S] gives the cumulative ayah count before surah S (1-indexed).
+// globalAyahNumber for surah S, ayah A = SURAH_STARTS[S] + A
+// e.g. SURAH_STARTS[1]=0 means Al-Fatiha starts at global ayah 1 (0+1).
 const SURAH_STARTS = [
   0,1,8,294,494,670,790,954,1160,1236,1352,1474,1597,1650,1756,1820,1901,
   2029,2140,2250,2349,2484,2595,2674,2772,2856,3029,3198,3254,3340,3410,
@@ -687,7 +692,7 @@ function mcGenerateQuestion() {
 
   var ayahNum  = minStart + Math.floor(Math.random() * (maxStart - minStart + 1));
   var ayah     = surah.ayahs[ayahNum - 1];
-  var nextAyah = surah.ayahs[ayahNum]; // correct answer = N+1
+    var nextAyah = surah.ayahs[ayahNum]; // 0-indexed: ayahs[N] = the (N+1)th ayah (next after current)
 
   if (!nextAyah) { mcGenerateQuestion(); return; }
 
@@ -1137,6 +1142,9 @@ function sqShowSummary() {
    MODE 7 — DAILY CHALLENGE
    ===================================================================== */
 
+var DC_XP_PER_CORRECT   = 20;
+var DC_XP_PERFECT_BONUS = 50;  // extra XP for scoring 10/10
+
 var dcState = {
   initialized: false,
   sessionReady: false,
@@ -1188,7 +1196,7 @@ async function dcStartOrShow() {
   var eligible = ALL_SURAHS.filter(function (s) {
     var nextS = SURAH_STARTS[s.number + 1] !== undefined
       ? SURAH_STARTS[s.number + 1]
-      : 6236;
+      : TOTAL_AYAHS;
     return (nextS - SURAH_STARTS[s.number]) >= 15;
   });
 
@@ -1434,7 +1442,7 @@ function dcBuildWO(container, surah, ayahNum) {
 function dcEnd() {
   var score = dcState.score;
   var today = todayString();
-  var xp    = score * 20 + (score === 10 ? 50 : 0);
+  var xp    = score * DC_XP_PER_CORRECT + (score === 10 ? DC_XP_PERFECT_BONUS : 0);
   awardXP(xp);
 
   progress.dailyChallengeDate  = today;
