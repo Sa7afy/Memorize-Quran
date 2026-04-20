@@ -1,75 +1,409 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مراجعة القرآن - Quran Flashcards</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مراجعة القرآن الكريم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>مراجعة القرآن الكريم</h1>
-        
-        <div class="controls">
-            <div class="control-group">
-                <label for="surahSelect">السورة:</label>
-                <select id="surahSelect">
-                    <option value="">اختر السورة</option>
-                </select>
-            </div>
 
-            <div class="control-group range-controls" id="rangeControls">
-                <label>نطاق الآيات:</label>
-                <div class="range-inputs">
-                    <input type="number" id="startAyah" min="1" placeholder="من">
-                    <span>إلى</span>
-                    <input type="number" id="endAyah" min="1" placeholder="إلى">
-                </div>
-                <button id="useFullSurah" class="small-btn">كل السورة</button>
-            </div>
-
-            <div class="control-group">
-                <label for="answerCount">عدد الآيات في الإجابة:</label>
-                <select id="answerCount">
-                    <option value="1" selected>آية واحدة</option>
-                    <option value="2">آيتان</option>
-                    <option value="3">ثلاث آيات</option>
-                    <option value="4">أربع آيات</option>
-                    <option value="5">خمس آيات</option>
-                </select>
-            </div>
-
-            <button id="newCard" class="primary-btn">آية جديدة</button>
-        </div>
-
-        <div class="info-bar" id="infoBar">
-            <span id="rangeInfo"></span>
-            <span id="totalAyahs"></span>
-        </div>
-
-        <div class="loading-spinner" id="loadingSpinner">
-            <div class="spinner"></div>
-            <p>جاري التحميل...</p>
-        </div>
-
-        <div class="flashcard" onclick="flipCard()" id="flashcard">
-            <div class="flashcard-inner">
-                <div class="flashcard-front">
-                    <div class="surah-name" id="surahName"></div>
-                    <p id="question">اختر سورة للبدء</p>
-                </div>
-                <div class="flashcard-back">
-                    <p id="answer">الإجابة</p>
-                </div>
-            </div>
-        </div>
-        
-        <p class="hint">انقر على البطاقة لإظهار الإجابة | مسافة للقلب | Enter لآية جديدة</p>
+  <!-- ===== PERSISTENT NAV ===== -->
+  <nav id="mainNav">
+    <div class="nav-title">مراجعة القرآن</div>
+    <div class="nav-stats">
+      <span id="navStreak">🌙 0 أيام</span>
+      <span id="navXP">⭐ 0 XP</span>
+      <button id="langToggle" class="nav-btn">EN</button>
     </div>
+  </nav>
 
-    <script src="script.js"></script>
+  <!-- Daily Goal Bar -->
+  <div id="dailyGoalBar">
+    <div class="goal-label">الهدف اليومي: <span id="goalProgress">0</span>/<span id="goalTarget">10</span></div>
+    <div class="goal-bar-container">
+      <div id="goalBarFill" class="goal-bar-fill"></div>
+    </div>
+  </div>
+
+  <!-- Global Loading Spinner -->
+  <div id="globalSpinner" class="global-spinner hidden">
+    <div class="spinner"></div>
+    <p>جاري التحميل...</p>
+  </div>
+
+  <!-- XP Notification -->
+  <div id="xpNotification" class="xp-notification hidden"></div>
+
+  <!-- Streak Notification -->
+  <div id="streakNotification" class="streak-notification hidden"></div>
+
+  <!-- ===== HOME PAGE ===== -->
+  <section data-page="home" class="page active">
+    <div class="home-container">
+      <div class="mode-grid">
+
+        <div class="mode-card" data-mode="flashcards">
+          <div class="mode-icon">📖</div>
+          <div class="mode-name">البطاقات التعليمية</div>
+          <div class="mode-desc">مراجعة الآيات بنظام البطاقات مع تقييم الحفظ والتكرار الذكي</div>
+        </div>
+
+        <div class="mode-card" data-mode="fill-blank">
+          <div class="mode-icon">✏️</div>
+          <div class="mode-name">أكمل الآية</div>
+          <div class="mode-desc">أكمل الكلمات المحذوفة من الآية الكريمة بمستويات متعددة</div>
+        </div>
+
+        <div class="mode-card" data-mode="multiple-choice">
+          <div class="mode-icon">✅</div>
+          <div class="mode-name">اختر الصواب</div>
+          <div class="mode-desc">اختر الآية الصحيحة التالية من بين أربعة خيارات</div>
+        </div>
+
+        <div class="mode-card" data-mode="word-order">
+          <div class="mode-icon">🔀</div>
+          <div class="mode-name">رتّب الكلمات</div>
+          <div class="mode-desc">رتّب كلمات الآية بالترتيب الصحيح مع مؤقت اختياري</div>
+        </div>
+
+        <div class="mode-card" data-mode="listening">
+          <div class="mode-icon">🎧</div>
+          <div class="mode-name">استمع وأكمل</div>
+          <div class="mode-desc">استمع لتلاوة الآية ثم أجب عن سؤال حول الآية التالية</div>
+        </div>
+
+        <div class="mode-card" data-mode="sequential">
+          <div class="mode-icon">📋</div>
+          <div class="mode-name">المراجعة المتسلسلة</div>
+          <div class="mode-desc">مراجعة الآيات بالترتيب مع تتبع التقدم وملخص النتائج</div>
+        </div>
+
+        <div class="mode-card daily-challenge-card" data-mode="daily-challenge">
+          <div class="mode-icon">🏆</div>
+          <div class="mode-name">تحدي اليوم</div>
+          <div class="mode-desc">تحدي يومي مميز يشمل أنواع أسئلة متعددة — يتجدد كل يوم</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FLASHCARDS PAGE ===== -->
+  <section data-page="flashcards" class="page">
+    <div class="mode-page-container">
+      <button class="back-btn" id="fc-back-btn">← الرئيسية</button>
+      <h2 class="mode-title">📖 البطاقات التعليمية</h2>
+
+      <div class="surah-selector-panel" id="fc-selector-panel">
+        <div class="selector-row">
+          <label>السورة:</label>
+          <select id="fc-surah-select" class="surah-select"></select>
+        </div>
+        <div class="selector-row range-row hidden" id="fc-range-row">
+          <label>من:</label>
+          <input type="number" id="fc-start" min="1" class="ayah-input" placeholder="1">
+          <label>إلى:</label>
+          <input type="number" id="fc-end" min="1" class="ayah-input" placeholder="آخر">
+          <button class="small-btn" id="fc-full-btn">كل السورة</button>
+        </div>
+        <button class="primary-btn" id="fc-start-btn">ابدأ</button>
+      </div>
+
+      <div id="fc-area" class="hidden">
+        <div class="flashcard-wrapper">
+          <div class="flashcard" id="fc-card">
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <div class="surah-label" id="fc-surah-label"></div>
+                <p id="fc-question" class="ayah-text"></p>
+                <p id="fc-translation" class="translation-text hidden"></p>
+                <p class="flip-hint">انقر للقلب</p>
+              </div>
+              <div class="flashcard-back">
+                <div class="surah-label green-label" id="fc-answer-label"></div>
+                <p id="fc-answer" class="ayah-text"></p>
+                <p id="fc-answer-translation" class="translation-text hidden"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="hint-text">مسافة = قلب | 1 = عرفتها | 2 = أتعلمها | 3 = لم أعرفها</p>
+        <div id="fc-rating-btns" class="rating-btns hidden">
+          <button class="rating-btn known-btn" id="fc-known">عرفتها ✓</button>
+          <button class="rating-btn learning-btn" id="fc-learning">أتعلمها ⟳</button>
+          <button class="rating-btn unknown-btn" id="fc-unknown">لم أعرفها ✗</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FILL IN THE BLANK PAGE ===== -->
+  <section data-page="fill-blank" class="page">
+    <div class="mode-page-container">
+      <button class="back-btn" id="fb-back-btn">← الرئيسية</button>
+      <h2 class="mode-title">✏️ أكمل الآية</h2>
+
+      <div class="surah-selector-panel" id="fb-selector-panel">
+        <div class="selector-row">
+          <label>السورة:</label>
+          <select id="fb-surah-select" class="surah-select"></select>
+        </div>
+        <div class="selector-row range-row hidden" id="fb-range-row">
+          <label>من:</label>
+          <input type="number" id="fb-start" min="1" class="ayah-input" placeholder="1">
+          <label>إلى:</label>
+          <input type="number" id="fb-end" min="1" class="ayah-input" placeholder="آخر">
+          <button class="small-btn" id="fb-full-btn">كل السورة</button>
+        </div>
+        <div class="selector-row">
+          <label>الصعوبة:</label>
+          <select id="fb-difficulty" class="surah-select" style="min-width:160px">
+            <option value="easy">سهل — آخر كلمة</option>
+            <option value="medium" selected>متوسط — كلمة من المنتصف</option>
+            <option value="hard">صعب — 2-3 كلمات</option>
+          </select>
+        </div>
+        <button class="primary-btn" id="fb-start-btn">ابدأ</button>
+      </div>
+
+      <div id="fb-area" class="hidden">
+        <div class="question-card">
+          <div class="surah-label" id="fb-surah-label"></div>
+          <div id="fb-ayah-display" class="ayah-text fill-ayah"></div>
+          <div id="fb-translation-display" class="translation-text hidden"></div>
+        </div>
+        <div id="fb-inputs-area" class="fb-inputs"></div>
+        <div class="action-row">
+          <button class="primary-btn" id="fb-check-btn">تحقق ✓</button>
+          <button class="secondary-btn hidden" id="fb-next-btn">التالي ←</button>
+        </div>
+        <div id="fb-result" class="result-msg hidden"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MULTIPLE CHOICE PAGE ===== -->
+  <section data-page="multiple-choice" class="page">
+    <div class="mode-page-container">
+      <button class="back-btn" id="mc-back-btn">← الرئيسية</button>
+      <h2 class="mode-title">✅ اختر الصواب</h2>
+
+      <div class="surah-selector-panel" id="mc-selector-panel">
+        <div class="selector-row">
+          <label>السورة:</label>
+          <select id="mc-surah-select" class="surah-select"></select>
+        </div>
+        <div class="selector-row range-row hidden" id="mc-range-row">
+          <label>من:</label>
+          <input type="number" id="mc-start" min="1" class="ayah-input" placeholder="1">
+          <label>إلى:</label>
+          <input type="number" id="mc-end" min="1" class="ayah-input" placeholder="آخر">
+          <button class="small-btn" id="mc-full-btn">كل السورة</button>
+        </div>
+        <button class="primary-btn" id="mc-start-btn">ابدأ</button>
+      </div>
+
+      <div id="mc-area" class="hidden">
+        <div class="score-display">النتيجة: <span id="mc-correct">0</span> / <span id="mc-total">0</span></div>
+        <div class="question-card">
+          <div class="surah-label" id="mc-surah-label"></div>
+          <p class="question-prompt">ما هي الآية التالية؟</p>
+          <div id="mc-current-ayah" class="ayah-text"></div>
+          <div id="mc-translation" class="translation-text hidden"></div>
+        </div>
+        <div id="mc-options" class="mc-options"></div>
+        <button class="primary-btn hidden" id="mc-next-btn">التالي ←</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WORD ORDER PAGE ===== -->
+  <section data-page="word-order" class="page">
+    <div class="mode-page-container">
+      <button class="back-btn" id="wo-back-btn">← الرئيسية</button>
+      <h2 class="mode-title">🔀 رتّب الكلمات</h2>
+
+      <div class="surah-selector-panel" id="wo-selector-panel">
+        <div class="selector-row">
+          <label>السورة:</label>
+          <select id="wo-surah-select" class="surah-select"></select>
+        </div>
+        <div class="selector-row range-row hidden" id="wo-range-row">
+          <label>من:</label>
+          <input type="number" id="wo-start" min="1" class="ayah-input" placeholder="1">
+          <label>إلى:</label>
+          <input type="number" id="wo-end" min="1" class="ayah-input" placeholder="آخر">
+          <button class="small-btn" id="wo-full-btn">كل السورة</button>
+        </div>
+        <div class="selector-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="wo-timer-toggle"> تفعيل المؤقت (60 ثانية)
+          </label>
+        </div>
+        <button class="primary-btn" id="wo-start-btn">ابدأ</button>
+      </div>
+
+      <div id="wo-area" class="hidden">
+        <div id="wo-timer-display" class="timer-display hidden">⏱ <span id="wo-timer">60</span> ثانية</div>
+        <div class="question-card">
+          <div class="surah-label" id="wo-surah-label"></div>
+          <p class="question-prompt">رتّب الكلمات لتكوين الآية الكريمة:</p>
+        </div>
+        <div class="wo-zone">
+          <p class="zone-label">منطقة الإجابة — انقر أو اسحب الكلمات هنا:</p>
+          <div id="wo-answer-area" class="word-drop-zone"></div>
+        </div>
+        <div class="wo-zone">
+          <p class="zone-label">بنك الكلمات:</p>
+          <div id="wo-word-bank" class="word-bank"></div>
+        </div>
+        <div class="action-row">
+          <button class="primary-btn" id="wo-check-btn">تحقق ✓</button>
+          <button class="secondary-btn hidden" id="wo-next-btn">التالي ←</button>
+        </div>
+        <div id="wo-result" class="result-msg hidden"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== LISTENING PAGE ===== -->
+  <section data-page="listening" class="page">
+    <div class="mode-page-container">
+      <button class="back-btn" id="li-back-btn">← الرئيسية</button>
+      <h2 class="mode-title">🎧 استمع وأكمل</h2>
+
+      <div class="surah-selector-panel" id="li-selector-panel">
+        <div class="selector-row">
+          <label>السورة:</label>
+          <select id="li-surah-select" class="surah-select"></select>
+        </div>
+        <div class="selector-row range-row hidden" id="li-range-row">
+          <label>من:</label>
+          <input type="number" id="li-start" min="1" class="ayah-input" placeholder="1">
+          <label>إلى:</label>
+          <input type="number" id="li-end" min="1" class="ayah-input" placeholder="آخر">
+          <button class="small-btn" id="li-full-btn">كل السورة</button>
+        </div>
+        <button class="primary-btn" id="li-start-btn">ابدأ</button>
+      </div>
+
+      <div id="li-area" class="hidden">
+        <div class="question-card">
+          <div class="surah-label" id="li-surah-label"></div>
+          <p class="question-prompt">🎧 استمع للآية:</p>
+          <audio id="li-audio" controls class="audio-player"></audio>
+        </div>
+        <div class="action-row">
+          <button class="primary-btn" id="li-done-btn">أكملت الاستماع ←</button>
+        </div>
+        <div id="li-question-area" class="hidden">
+          <p class="question-prompt white-prompt">ما هي الآية التالية؟</p>
+          <div id="li-options" class="mc-options"></div>
+        </div>
+        <button class="primary-btn hidden" id="li-next-btn">التالي ←</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SEQUENTIAL REVIEW PAGE ===== -->
+  <section data-page="sequential" class="page">
+    <div class="mode-page-container">
+      <button class="back-btn" id="sq-back-btn">← الرئيسية</button>
+      <h2 class="mode-title">📋 المراجعة المتسلسلة</h2>
+
+      <div class="surah-selector-panel" id="sq-selector-panel">
+        <div class="selector-row">
+          <label>السورة:</label>
+          <select id="sq-surah-select" class="surah-select"></select>
+        </div>
+        <div class="selector-row range-row hidden" id="sq-range-row">
+          <label>من:</label>
+          <input type="number" id="sq-start" min="1" class="ayah-input" placeholder="1">
+          <label>إلى:</label>
+          <input type="number" id="sq-end" min="1" class="ayah-input" placeholder="آخر">
+          <button class="small-btn" id="sq-full-btn">كل السورة</button>
+        </div>
+        <button class="primary-btn" id="sq-start-btn">ابدأ</button>
+      </div>
+
+      <div id="sq-area" class="hidden">
+        <div class="progress-bar-container">
+          <div id="sq-progress-fill" class="progress-bar-fill"></div>
+        </div>
+        <div class="progress-label"><span id="sq-current-num">0</span> / <span id="sq-total-num">0</span> آية</div>
+        <div class="question-card">
+          <div class="surah-label" id="sq-surah-label"></div>
+          <div id="sq-ayah-text" class="ayah-text"></div>
+          <div id="sq-translation" class="translation-text hidden"></div>
+        </div>
+        <div class="sq-buttons">
+          <button class="rating-btn known-btn" id="sq-known-btn">عرفت ✓</button>
+          <button class="rating-btn unknown-btn" id="sq-unknown-btn">لم أعرف ✗</button>
+        </div>
+      </div>
+
+      <div id="sq-summary" class="summary-screen hidden">
+        <div class="summary-icon">🎉</div>
+        <h3>انتهت المراجعة!</h3>
+        <div class="summary-stats">
+          <div class="stat-item">
+            <span class="stat-num" id="sq-known-count">0</span>
+            <span class="stat-label">عرفت</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num" id="sq-unknown-count">0</span>
+            <span class="stat-label">لم أعرف</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num" id="sq-percent">0%</span>
+            <span class="stat-label">النسبة</span>
+          </div>
+        </div>
+        <button class="primary-btn" id="sq-home-btn">العودة للرئيسية</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DAILY CHALLENGE PAGE ===== -->
+  <section data-page="daily-challenge" class="page">
+    <div class="mode-page-container">
+      <button class="back-btn" id="dc-back-btn">← الرئيسية</button>
+      <h2 class="mode-title">🏆 تحدي اليوم</h2>
+
+      <!-- Already completed screen -->
+      <div id="dc-completed-screen" class="summary-screen hidden">
+        <div class="summary-icon">🌙</div>
+        <p class="completed-msg">لقد أكملت تحدي اليوم!</p>
+        <p id="dc-last-score" class="yesterday-score"></p>
+        <button class="primary-btn" id="dc-completed-home-btn">العودة للرئيسية</button>
+      </div>
+
+      <!-- Active challenge area -->
+      <div id="dc-area" class="hidden">
+        <div class="progress-label">السؤال <span id="dc-q-num">1</span> من 10</div>
+        <div class="progress-bar-container">
+          <div id="dc-progress-fill" class="progress-bar-fill"></div>
+        </div>
+        <div id="dc-question-area"></div>
+      </div>
+
+      <!-- End screen -->
+      <div id="dc-end-screen" class="summary-screen hidden">
+        <div class="summary-icon">🏆</div>
+        <h3>انتهى التحدي!</h3>
+        <p id="dc-final-score" class="final-score"></p>
+        <div class="action-row" style="justify-content:center; gap:12px;">
+          <button class="primary-btn" id="dc-share-btn">مشاركة النتيجة 📤</button>
+          <button class="secondary-btn" id="dc-end-home-btn">العودة للرئيسية</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
 </body>
 </html>
